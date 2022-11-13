@@ -1,0 +1,150 @@
+<!DOCTYPE HTML>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>PROJECT 1</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="index.html" class="logo">COVID:India</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Projects</a></li>
+							<li class="active"><a>Covid:India</a></li>
+							
+						</ul>
+						<ul class="icons">
+							
+							<li><a href="https://www.linkedin.com/in/mihir-chopdekar-581561159/" class="icon brands fa-linkedin"><span class="label">Twitter</span></a></li>
+							<li><a href="https://github.com/MihirAnalyst" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+						
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<section class="post">
+								<header class="major">
+									<h1>DATA EXPLORATION<br />
+										COVID 19:INDIA
+									</h1>
+									<div class='tableauPlaceholder' id='viz1668283811599' style='float:left'><noscript><a href='#'><img alt='Dashboard 5 ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Co&#47;Covid_ind&#47;Dashboard5&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='' /><param name='name' value='Covid_ind&#47;Dashboard5' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Co&#47;Covid_ind&#47;Dashboard5&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='en-US' /><param name='filter' value='publish=yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1668283811599');                    var vizElement = divElement.getElementsByTagName('object')[0];                    if ( divElement.offsetWidth > 800 ) { vizElement.style.width='1128px';vizElement.style.height='1324px';} else if ( divElement.offsetWidth > 500 ) { vizElement.style.width='1128px';vizElement.style.height='1324px';} else { vizElement.style.width='100%';vizElement.style.height='2027px';}                     var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+									
+								</header>
+								<div class="image main"></div><br>
+								<h3>Data:</h3>
+									<a href="https://ourworldindata.org/covid-deaths">Source 1</a>.
+									<a href="https://www.mygov.in/corona-data/covid19-statewise-status/">Source 2</a>.
+								<h3>SQL Exploration:</h3>
+								<pre><code>SELECT location,date, new_cases, total_cases, new_deaths, total_deaths<br>FROM [Portfolio Project]..CovidDeaths<br>WHERE continent is not null<br>ORDER BY 1</code></pre>	
+								<p>Looking at Mortality Rate in a particular Country</p>
+								<pre><code>SELECT location,date, total_cases, total_deaths, (total_deaths/total_cases)*100 as Death_percent<br>FROM [Portfolio Project]..CovidDeaths<br>WHERE location='India'<br>ORDER BY 1,2</code></pre>
+								<p>Looking at Total Cases vs Population</p>
+								<pre><code>SELECT location,date, total_cases, population, (total_cases/population)*100 as Infection_rate<br>FROM [Portfolio Project]..CovidDeaths<br>WHERE location='India'<br>ORDER BY 1,2 </code></pre>
+								<p>Looking at the country with the highest Infection rate</p>
+								<pre><code>SELECT location, population, MAX(total_cases) as total_infections, (MAX(total_cases)/population)*100 as Infection_rate<br>FROM [Portfolio Project]..CovidDeaths<br>WHERE continent is not null<br>GROUP BY Location, Population<br>ORDER BY Infection_rate DESC</code></pre>
+								<p>Looking at the country with the highest Death rate</p>
+								<pre><code>SELECT location, population, MAX(CAST(total_deaths as INT)) as total_deaths, (MAX(CAST(total_cases))/population)*100 as death_rate<br>FROM [Portfolio Project]..CovidDeaths<br>WHERE continent is not null<br>GROUP BY Location, Population<br>ORDER BY death_rate DESC</code></pre>
+								<p>Looking at Data by Continent</p>
+								<pre><code><br>SELECT location, population, MAX(CAST(total_cases as INT)) as Total_Cases, MAX(CAST(total_deaths as INT)) as Total_deaths<br>FROM [Portfolio Project]..CovidDeaths-<br>WHERE continent is null and iso_code not like '%C'<br>GROUP BY Location, Population, iso_Code<br>ORDER BY population DESC</code></pre>
+								<p>Looking at World Data</p>
+								<pre><code>SELECT date,location,sum(new_cases) as Infections,sum(cast(new_deaths as int)) as Deaths<br>FROM [Portfolio Project]..CovidDeaths<br>WHERE location='World'<br>GROUP BY date,location<br>ORDER BY date </code></pre>
+								<p>Total Population vs Vaccination</p>
+								<pre><code>SELECT d.continent, d.location, d.date, d.population, v.new_vaccinations<br>FROM [Portfolio Project]..CovidDeaths as d<br>JOIN [Portfolio Project]..CovidVaccinations as v<br>	ON d.location=v.location<br>	AND d.date=v.date<br>WHERE d.continent IS NOT NULL<br>ORDER BY location,date</code></pre>
+								<p>Rolling Count of Vaccination</p>
+								<pre><code>SELECT d.continent, d.location, d.date, d.population, v.new_vaccinations,<br>	SUM(CAST(v.new_vaccinations as BIGINT)) OVER (PARTITION BY d.location ORDER BY d.location, d.date) as Rolling_Count_Vaccination<br>FROM [Portfolio Project]..CovidDeaths as D<br>JOIN [Portfolio Project]..CovidVaccinations as V<br>	ON d.location=v.location<br>	AND d.date=v.date<br>WHERE d.continent is not null<br>order by location,date</code></pre>
+								<P>Prepping data for Visualisation</P>
+								<pre><code>SELECT location,MAX(total_cases) AS total_cases,(MAX(total_cases)/MAX(population)*100) AS inf_rate , MAX(CAST(total_deaths AS INT)) as total_deaths,( MAX(CAST(total_deaths AS INT))/MAX(total_cases)*100) AS mor_rate<br>FROM [Portfolio Project]..CovidDeaths<br>WHERE location='India' OR location='World' OR location='Asia'<br>GROUP BY location</code></pre>
+								<pre><code>SELECT location,date, new_cases, new_deaths<br>FROM [Portfolio Project]..CovidDeaths<br>WHERE location='India' OR location='World' OR location='Asia'<br>ORDER BY 1,2</code></pre>
+								<pre><code>Select date, location, total_vaccinations,people_vaccinated,people_fully_vaccinated,new_vaccinations,people_vaccinated_per_hundred,people_fully_vaccinated_per_hundred <br>FROM [Portfolio Project]..CovidVaccinations<br>WHERE location='India' OR location='World' OR location='Asia'<br>ORDER by 2,1</code></pre>
+							</section>
+
+							
+					
+					</div>
+
+				<!-- Footer>
+					<footer id="footer">
+						<section>
+							<form method="post" action="#">
+								<div class="fields">
+									<div class="field">
+										<label for="name">Name</label>
+										<input type="text" name="name" id="name" />
+									</div>
+									<div class="field">
+										<label for="email">Email</label>
+										<input type="text" name="email" id="email" />
+									</div>
+									<div class="field">
+										<label for="message">Message</label>
+										<textarea name="message" id="message" rows="3"></textarea>
+									</div>
+								</div>
+								<ul class="actions">
+									<li><input type="submit" value="Send Message" /></li>
+								</ul>
+							</form>
+						</section>
+						<section class="split contact">
+							<section class="alt">
+								<h3>Address</h3>
+								<p>1234 Somewhere Road #87257<br />
+								Nashville, TN 00000-0000</p>
+							</section>
+							<section>
+								<h3>Phone</h3>
+								<p><a href="#">(000) 000-0000</a></p>
+							</section>
+							<section>
+								<h3>Email</h3>
+								<p><a href="#">info@untitled.tld</a></p>
+							</section>
+							<section>
+								<h3>Social</h3>
+								<ul class="icons alt">
+									<li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+									<li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+									<li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+									<li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+								</ul>
+							</section>
+						</section>
+					</footer-->
+
+				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

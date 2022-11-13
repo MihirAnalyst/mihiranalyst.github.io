@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<!--
+	Massively by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>PROJECT 3</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+					<header id="header">
+						<a href="index.html" class="logo">Data Cleaning</a>
+					</header>
+
+				<!-- Nav -->
+					<nav id="nav">
+						<ul class="links">
+							<li><a href="index.html">Projects</a></li>
+							<li class="active"><a>Data Cleaning</a></li>
+							
+						</ul>
+						<ul class="icons">
+							<li><a href="https://www.linkedin.com/in/mihir-chopdekar-581561159/" class="icon brands fa-linkedin"><span class="label">Twitter</span></a></li>
+							<li><a href="https://github.com/MihirAnalyst" class="icon brands fa-github"><span class="label">GitHub</span></a></li>
+						
+						</ul>
+					</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<section class="post">
+								<header class="major">
+								
+									<h1>DATA CLEANING
+										IN SQL</h1>
+									<p> Data cleaning is the process of fixing or removing incorrect, corrupted, incorrectly formatted, duplicate, or incomplete data within a dataset.</p>
+								</header>
+								<pre><code>SELECT *<br>FROM [Portfolio Project]..NashvilleHousing</code></pre>
+								 <p>Standardize Date Format</p>
+								<pre><code>ALTER TABLE [Portfolio Project]..NashvilleHousing<br>ADD SaleDateConverted Date;</code></pre>
+								<pre><code>UPDATE [Portfolio Project]..NashvilleHousing<br>SET SaleDateConverted = CONVERT(Date,SaleDate)</code></pre>
+								<P>Checking for NULL values in PropertyAdress</P>
+								<pre><code>SELECT *<br>FROM [Portfolio Project]..NashvilleHousing<br>WHERE PropertyAddress is NULL</code></pre>
+								<p>Populate Property Address data</p>
+								<pre><code>SELECT a.ParcelID, a.PropertyAddress, b.ParcelID, b.PropertyAddress, ISNULL(a.PropertyAddress,b.PropertyAddress)<br>FROM [Portfolio Project]..NashvilleHousing a<br>JOIN [Portfolio Project]..NashvilleHousing b<br>	ON a.ParcelID = b.ParcelID<br>	AND a.[UniqueID ] <> b.[UniqueID ]<br>WHERE a.PropertyAddress IS NULL</code></pre>
+								<pre><code>UPDATE a<BR>SET PropertyAddress = ISNULL(a.PropertyAddress,b.PropertyAddress)<BR>FROM [Portfolio Project]..NashvilleHousing a,<br>JOIN [Portfolio Project]..NashvilleHousing b<br>	on a.ParcelID = b.ParcelID<br>	AND a.[UniqueID ] <> b.[UniqueID ]<br>WHERE a.PropertyAddress IS NULL</code></pre>
+								<p>Splitting PropertyAddress into Individual Columns (Address, City, State)</p>
+								<pre><code>SELECT SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) -1 ) as Address,<br>SUBSTRING(PropertyAddress,CHARINDEX(',', PropertyAddress) + 1 , LEN(PropertyAddress)) as Address<br>From [Portfolio Project]..NashvilleHousing</code></pre>
+								<pre><code>ALTER TABLE [Portfolio Project]..NashvilleHousing<br>ADD PropertySplitAddress Nvarchar(255);<br><br>UPDATE [Portfolio Project]..NashvilleHousing<BR>SET PropertySplitAddress = SUBSTRING(PropertyAddress, 1, CHARINDEX(',', PropertyAddress) -1 )</code></pre>
+								<pre><code>ALTER TABLE [Portfolio Project]..NashvilleHousing<br>ADD PropertySplitCity Nvarchar(255);<br>UPDATE [Portfolio Project]..NashvilleHousing<br>SET PropertySplitCity = SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) + 1 , LEN(PropertyAddress))</code></pre>
+								<p>Splitting OwnerAdress in Individual Columns</p>
+								<pre><code>ALTER TABLE [Portfolio Project]..NashvilleHousing<br>ADD OwnerSplitAddress Nvarchar(255);<br><br>ALTER TABLE [Portfolio Project]..NashvilleHousing<br>ADD OwnerSplitState Nvarchar(255);<br><br>ALTER TABLE [Portfolio Project]..NashvilleHousing<br>ADD OwnerSplitCity Nvarchar(255);<br><br>Update [Portfolio Project]..NashvilleHousing<br>SET OwnerSplitAddress = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 3)<br><br>Update [Portfolio Project]..NashvilleHousing<br>SET OwnerSplitCity = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 2)<br><br>Update [Portfolio Project]..NashvilleHousing<br>SET OwnerSplitState = PARSENAME(REPLACE(OwnerAddress, ',', '.') , 1)</code></pre>
+								<p>Change Y and N to Yes and No in "Sold as Vacant" field</p>
+								<pre><code>UPDATE [Portfolio Project]..NashvilleHousing<br>SET SoldAsVacant = CASE When SoldAsVacant = 'Y' THEN 'Yes'<br>When SoldAsVacant = 'N' THEN 'No'<br>ELSE SoldAsVacant<br>END</code></pre>
+								<P>Delete Unused Columns</P>
+								<pre><code>ALTER TABLE [Portfolio Project]..NashvilleHousing,<br>DROP COLUMN OwnerAddress, TaxDistrict, PropertyAddress, SaleDate</code></pre>
+
+								</section>
+
+					</div>
+
+				<!-- Footer>
+					<footer id="footer">
+						<section>
+							<form method="post" action="#">
+								<div class="fields">
+									<div class="field">
+										<label for="name">Name</label>
+										<input type="text" name="name" id="name" />
+									</div>
+									<div class="field">
+										<label for="email">Email</label>
+										<input type="text" name="email" id="email" />
+									</div>
+									<div class="field">
+										<label for="message">Message</label>
+										<textarea name="message" id="message" rows="3"></textarea>
+									</div>
+								</div>
+								<ul class="actions">
+									<li><input type="submit" value="Send Message" /></li>
+								</ul>
+							</form>
+						</section>
+						<section class="split contact">
+							<section class="alt">
+								<h3>Address</h3>
+								<p>1234 Somewhere Road #87257<br />
+								Nashville, TN 00000-0000</p>
+							</section>
+							<section>
+								<h3>Phone</h3>
+								<p><a href="#">(000) 000-0000</a></p>
+							</section>
+							<section>
+								<h3>Email</h3>
+								<p><a href="#">info@untitled.tld</a></p>
+							</section>
+							<section>
+								<h3>Social</h3>
+								<ul class="icons alt">
+									<li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+									<li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+									<li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+									<li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
+								</ul>
+							</section>
+						</section>
+					</footer-->
+
+				<!-- Copyright -->
+					<div id="copyright">
+						<ul><li>&copy; Untitled</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
